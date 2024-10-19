@@ -120,6 +120,8 @@ def use_password(file, password):
     
 def get_hashcat_command(args, hash_mode, hash_text):
     if args.type:
+        if args.type == "combinator":
+            return f"hashcat -m {hash_mode} -a 1 -O --potfile-disable --status --remove {hash_text} small-words.txt small-words.txt"
         if args.type == "easy":
             return f"hashcat -m {hash_mode} -a 0 -r best64.rule -O --potfile-disable --status --remove {hash_text} words.txt"
         if args.type == "medium":
@@ -131,7 +133,7 @@ def get_hashcat_command(args, hash_mode, hash_text):
     if args.dictionary and args.rules:
         return f"hashcat -m {hash_mode} -a 0 -r {args.rules} -O --potfile-disable --status --remove {hash_text} {args.dictionary}"
     if args.dictionary:
-        return f"hashcat -m {hash_mode} -a 0 -r best64.rule -O --potfile-disable --status --remove {hash_text} {args.dictionary}"
+        return f"hashcat -m {hash_mode} -a 0 -O --potfile-disable --status --remove {hash_text} {args.dictionary}"
     if args.rules:
         return f"hashcat -m {hash_mode} -a 0 -r {args.rules} -O --potfile-disable --status --remove {hash_text} words.txt"
     return f"hashcat -m {hash_mode} -a 0 -r onerule.rule -O --potfile-disable --status --remove {hash_text} rockyou.txt words.txt"
